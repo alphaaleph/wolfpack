@@ -1,2 +1,2 @@
-# gtetris
-Learning ebiten with a tetris game
+# spiders
+Learning ebiten with a shootout game
