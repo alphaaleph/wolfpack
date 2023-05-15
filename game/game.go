@@ -1,32 +1,27 @@
 package game
 
 import (
-	"github.com/alphaaleph/spiders/img"
+	"github.com/alphaaleph/wolfpack/assets/ui"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const (
-	ScreenWidth  = 600
-	ScreenHeight = 800
-)
-
-var SpidersApp *Game
+var WolfpackApp *Game
 
 // Game implements ebiten.Game interface.
 type Game struct {
 	modeLevel modeType
 	keys      []ebiten.Key
-	img.Player
-	img.Bullet
-	img.Spider
-	img.Minion
-	img.Poison
+	destroyer ui.Sprite   // boat used by the player to destroy uboats
+	charge    ui.Sprite   // dept charges shot by the destroyer
+	u103      ui.Sprite   // the boss uboat, appears when all uboats are destroyed
+	wolfpack  []ui.Sprite // a slice of uboat
+	torpedo   ui.Sprite   // the torpedos shot by uboats and the u103 wolf
 }
 
 // NewGame creates a single instance of the game
 func NewGame() *Game {
-	if SpidersApp == nil {
-		SpidersApp = &Game{}
+	if WolfpackApp == nil {
+		WolfpackApp = &Game{}
 	}
-	return SpidersApp
+	return WolfpackApp
 }

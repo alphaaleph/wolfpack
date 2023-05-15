@@ -13,15 +13,15 @@ func gameKeys() {
 		((inpututil.IsKeyJustPressed(ebiten.KeyAlt)) && inpututil.IsKeyJustPressed(ebiten.KeyF4)) {
 		closeWindow()
 
-		// left arrow key moves the player to the left
+		// left arrow key moves the destroyer to the left
 	} else if repeatingKeyPressed(ebiten.KeyLeft) {
-		SpidersApp.Player.X -= SpidersApp.Player.Speed
+		WolfpackApp.destroyer.DecX(WolfpackApp.destroyer.GetSpeed())
 
-		// right arrow key moves the player to the right
+		// right arrow key moves the destroyer to the right
 	} else if repeatingKeyPressed(ebiten.KeyRight) {
-		SpidersApp.Player.X += SpidersApp.Player.Speed
+		WolfpackApp.destroyer.IncX(WolfpackApp.destroyer.GetSpeed())
 
-		// space shoot bullets
+		// space drops depth charges
 	} else if repeatingKeyPressed(ebiten.KeySpace) {
 
 	}

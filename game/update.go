@@ -7,13 +7,13 @@ import "github.com/hajimehoshi/ebiten/v2/inpututil"
 func (g *Game) Update() error {
 
 	// check the correct game mode
-	//switch g.modeLevel {
-	//case ModeTitle:
-	//	g.modeLevel = ModeGame //TODO: make sure to add title screen before switching to game mode
-	//case ModeGame:
-	g.keys = inpututil.AppendPressedKeys(g.keys[:0])
-	gameKeys()
-	//case ModeOver:
-	//}
+	switch g.modeLevel {
+	case ModeTitle:
+		g.modeLevel = ModeGame //TODO: make sure to add title screen before switching to game mode
+	case ModeGame:
+		g.keys = inpututil.AppendPressedKeys(g.keys[:0])
+		gameKeys()
+	case ModeOver:
+	}
 	return nil
 }
