@@ -1,6 +1,6 @@
 package game
 
-import "github.com/alphaaleph/wolfpack/assets/ui"
+import "github.com/alphaaleph/wolfpack/assets/graphics"
 
 // initialize images
 func init() {
@@ -10,7 +10,7 @@ func init() {
 	WolfpackApp.modeLevel = ModeTitle
 
 	// init each sprite used in the game
-	WolfpackApp.destroyer = ui.NewDestroyer()
-	WolfpackApp.u103 = ui.NewU103()
+	WolfpackApp.destroyer = graphics.NewDestroyer()
+	WolfpackApp.u103 = graphics.NewU103()
 	//TODO: WolfpackApp.wolfpack = ui.NewWolfpack()
 }

@@ -14,16 +14,16 @@ const (
 var (
 	// score section 50 pixels
 	scoreSectionHeight = 50
-	scoreSectionRect   = ebiten.NewImage(ScreenWidth, scoreSectionHeight)
+	ScoreSectionRect   = ebiten.NewImage(ScreenWidth, scoreSectionHeight)
 	//scoreSection       = scoreSectionRect.SubImage(image.Rect(0, 0, ScreenWidth-1, scoreSectionHeight-1)).(*ebiten.Image)
 	//scoreSection = scoreSectionRect.SubImage(image.Rect(100, 100, 200, 200)).(*ebiten.Image)
 
 	// destroyer section 150 pixels
 	destroyerSectionHeight = 150
-	destroyerSectionRect   = ebiten.NewImage(ScreenWidth, destroyerSectionHeight)
+	DestroyerSectionRect   = ebiten.NewImage(ScreenWidth, destroyerSectionHeight)
 	//DestroyerSection       = destroyerSectionRect.SubImage(image.Rect(0, scoreSectionHeight, ScreenWidth-1,
 	//	scoreSectionHeight+destroyerSectionHeight-1)).(*ebiten.Image)
-	DestroyerSection = destroyerSectionRect.SubImage(image.Rect(0, 200, 600, 700)).(*ebiten.Image)
+	//DestroyerSection = DestroyerSectionRect.SubImage(image.Rect(0, 200, 600, 700)).(*ebiten.Image)
 
 	// wolfpack section 750 pixels, 250 per sub-section
 	wolfpackSectionHeight    = 600
@@ -43,19 +43,19 @@ var (
 )
 
 func DrawScoresBackground(screen *ebiten.Image) {
-	scoreSectionRect.Fill(color.RGBA{0xff, 0xf8, 0xdc, 0x00}) // white
+	ScoreSectionRect.Fill(color.RGBA{0xff, 0xf8, 0xdc, 0x00}) // white
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(0.0, 0.0)
 	options.Filter = ebiten.FilterLinear
-	screen.DrawImage(scoreSectionRect, nil)
+	screen.DrawImage(ScoreSectionRect, nil)
 }
 
 func DrawDestroyerBackground(screen *ebiten.Image) {
-	destroyerSectionRect.Fill(color.RGBA{0xe0, 0xff, 0xff, 0xff}) // light cyan
+	DestroyerSectionRect.Fill(color.RGBA{0xe0, 0xff, 0xff, 0xff}) // light cyan
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Translate(0.0, 50.0)
 	options.Filter = ebiten.FilterLinear
-	screen.DrawImage(destroyerSectionRect, options)
+	screen.DrawImage(DestroyerSectionRect, options)
 }
 
 func DrawWolfpackBackground(screen *ebiten.Image) {

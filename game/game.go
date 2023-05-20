@@ -1,8 +1,7 @@
 package game
 
 import (
-	"github.com/alphaaleph/wolfpack/assets/ui"
-	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/alphaaleph/wolfpack/assets/graphics"
 )
 
 var WolfpackApp *Game
@@ -10,12 +9,10 @@ var WolfpackApp *Game
 // Game implements ebiten.Game interface.
 type Game struct {
 	modeLevel modeType
-	keys      []ebiten.Key
-	destroyer ui.Sprite   // boat used by the player to destroy uboats
-	charge    ui.Sprite   // dept charges shot by the destroyer
-	u103      ui.Sprite   // the boss uboat, appears when all uboats are destroyed
-	wolfpack  []ui.Sprite // a slice of uboat
-	torpedo   ui.Sprite   // the torpedos shot by uboats and the u103 wolf
+	//keys      []ebiten.Key
+	destroyer graphics.SpriteObject   // boat used by the player to destroy uboats
+	u103      graphics.SpriteObject   // the boss uboat, appears when all uboats are destroyed
+	wolfpack  []graphics.SpriteObject // a slice of uboat
 }
 
 // NewGame creates a single instance of the game

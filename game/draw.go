@@ -2,7 +2,7 @@ package game
 
 import (
 	"fmt"
-	"github.com/alphaaleph/wolfpack/assets/ui"
+	"github.com/alphaaleph/wolfpack/assets/graphics"
 	"github.com/alphaaleph/wolfpack/util"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/examples/resources/fonts"
@@ -45,7 +45,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	WolfpackApp.destroyer.Render(screen)
 
 	// render the uboats, and when all are dead bring in the boss U103
-	if ui.BringTheWolf {
+	if graphics.BringTheWolf {
 		WolfpackApp.u103.Render(screen)
 	} else {
 		//TODO: show uboats
