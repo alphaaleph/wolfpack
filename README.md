@@ -1,32 +1,77 @@
 # wolfpack
-Learning Ebiten, and generic constrains with pointers, by making a submarine hunt game
+Learning Ebiten, and generic constrains with pointers, by making a submarine hunt game.  The game consists of a 
+destroyer used by the player to sink the passing submarines below; just liek the old Ataru or Commodore games.
+
+## Characters
+
+There are three characters displayed in the game:
+
+### Destroyer
+![plot](./assets/graphics/sprites/ship_left.png)
+
+Used by the player to sink the enemy submarines. The destroyer fires deep charges, which have to be reloaded at 
+certain intervals.  The left and right arrows are used to move the destroyer, and the space bar is used to fire the
+deep charges.
+
+### Uboat
+![plot](./assets/graphics/sprites/uboat_left.png)
+
+This is the main enemy submarine.  It will show at different speeds and depths and will try to sink the destroyer
+shooting torpedoes at it.  There is a slice of uboats (wolfpack), that has to be completely sunk before the boss (U103) 
+submarine shows up.
+
+
+### U103
+![plot](./assets/graphics/sprites/wolf_left.png)
+
+This is the boss submarine.  Once all of the uboats have been sunk, the boss U103 will show up. The U103 will show up
+at different depths, using different speeds.
 
 
 
+
+## Ammo
+
+There are three sets of ammo used by the characters:
+
+### Deep Charges 
+![plot](./assets/graphics/sprites/deep_charge.png)
+
+### Uboat Torpedoes
+![plot](./assets/graphics/sprites/uboat_torpedo.png)
+
+### U103 Torpedoes
+![plot](./assets/graphics/sprites/wolf_torpedo.png)
+
+
+## Ammo Pool
+A pool pattern is being used to manage the character's ammo.
 
 
 
 ## Generics
-Was playing around with generics. Used them to load the sprites into the corresponding images.  **NOTE:** while 
-using generics with structs, and methods with pointer receivers, you have to make sure that your interface constrains
+Was playing around with generics. Used them to load the sprites into the corresponding character and ammo images. I used
+two separate generic instances for the characters and the ammo. Here is the example for just the characters. **NOTE:** 
+while using generics with structs, and methods with pointer receivers, you have to make sure that your interface constrains 
 also use pointers, or it will fail to compile.  Ex."
 ```
-    // Sprites defines the image manipulation constrains
-    type Sprites interface {
-	    *destroyer | *charge | *u103 | *uboat | *torpedo | *stamp
-	    Sprite
+    // spriteCharacterObject defines the image manipulation constrains for characters
+    type spriteCharacterObject interface {
+	    *destroyer | *u103 | *uboat | *stamp
+	    SpriteObject
+	    GetRect(characterType) image.Rectangle
     }
 ```
 
 The generics implementation use the interface for the generic parameters as follows:
 ```
-    // spritesImpl is used to call functions on the game sprite structs
-    type spritesImpl[T Sprites] struct {
+    // spriteCharacterImpl is used to call functions on the character's sprite structs
+    type spriteCharacterImpl[T spriteCharacterObject] struct {
     }
 
     // New returns an instance of a sprite
-    func New[T Sprites]() (t *spritesImpl[T]) {
-	    t = &spritesImpl[T]{}
+    func NewCharacterImpl[T spriteCharacterObject]() (t *spriteCharacterImpl[T]) {
+	    t = &spriteCharacterImpl[T]{}
 	    return t
     }
 ```
@@ -35,7 +80,7 @@ But because the interface constrains and methods receivers both have pointers, t
 using pointers as follows:
 ```
     destroyerSprite := &destroyer{}
-    destroyerSprite.image = New[*destroyer]().loadSprite(destroyerSprite)
+    destroyerSprite.image = NewCharacterImpl[*destroyer]().loadCharacterSprite(d.ctype, destroyerSprite)
 ```
 
 
