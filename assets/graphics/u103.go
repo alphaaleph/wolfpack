@@ -1,42 +1,49 @@
 package graphics
 
 import (
-	"github.com/alphaaleph/wolfpack/util"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 )
 
 var (
-	BringTheWolf = false
+	BringTheWolf  = false
+	u103AmmoPack  = 8 // 8 torpedos
+	u103AmmoSpeed = 5.0
 )
 
 type u103 struct {
-	stamp
+	character
 	sunk bool
 }
 
 // NewU103 creates an instance of a new U103 boss
-func NewU103() SpriteObject {
-	// create a new u103
-	u103Sprite := &u103{}
-	u103Sprite.image = NewCharacterImpl[*u103]().loadCharacterSprite(CharacterLeft, u103Sprite)
+func NewU103() SpriteCharacterObject {
+	// create a new destroyer
+	u := &u103{
+		character: character{
+			ctype: CharacterLeft,
+			speed: subSpeed[depthC], //TODO: pick the speed based on the depth that the u103 appears at
+			X:     0,                //TODO: calculate the correct random location
+			Y:     0,                //TODO: calculate the correct random location
+		},
+		sunk: false,
+	}
 
-	// u103
-	u103Sprite.X = util.ScreenWidth / 2.0
-	u103Sprite.Y = float64(u103Sprite.image.Bounds().Dy()) * 1.5
-	u103Sprite.speed = 15.0 // TODO: create different speed for how hard the game is
-	return u103Sprite
+	// load the ammo into the u103
+	u.munition = u.getMunitionPool(u103Torpedo, u103AmmoSpeed, u103AmmoPack)
+
+	return u
 }
 
 // GetRect returns the u103's image location in the sprite sheet
 func (u *u103) GetRect(ct characterType) image.Rectangle {
 	switch ct {
 	case CharacterLeft:
-		return u103LeftStamp
+		return u103LeftSprite
 	case CharacterRight:
-		return u103RightStamp
+		return u103RightSprite
 	case CharacterExplosion:
-		return u103ExplosionStamp
+		return u103ExplosionSprite
 	default:
 		return image.Rectangle{}
 	}

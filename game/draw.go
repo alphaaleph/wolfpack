@@ -42,6 +42,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	msg := fmt.Sprintf("SCORE: %0.2f", ebiten.ActualTPS())
 	text.Draw(screen, msg, mplusNormalFont, 20, 40, color.Black)
 
+	// render the destroyer
 	WolfpackApp.destroyer.Render(screen)
 
 	// render the uboats, and when all are dead bring in the boss U103

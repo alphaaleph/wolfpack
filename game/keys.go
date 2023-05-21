@@ -10,44 +10,30 @@ import (
 // gameKeys checks which keys have been pressed and executes a command accordingly during the game mode
 func gameKeys() {
 	// Q or Alt-F4 - close the game window
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyQ) ||
 		((inpututil.IsKeyJustPressed(ebiten.KeyAlt)) && inpututil.IsKeyJustPressed(ebiten.KeyF4)) {
 		closeWindow()
+	}
 
-		// left arrow key moves the destroyer to the left
-		//} else if repeatingKeyPressed(ebiten.KeyLeft) {
-	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		WolfpackApp.destroyer.Stamp(graphics.CharacterLeft)
+	// left arrow key moves the destroyer to the left
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		WolfpackApp.destroyer.Character(graphics.CharacterLeft)
 		WolfpackApp.destroyer.DecX(WolfpackApp.destroyer.GetSpeed())
+	}
 
-		// right arrow key moves the destroyer to the right
-		//} else if repeatingKeyPressed(ebiten.KeyRight) {
-	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		WolfpackApp.destroyer.Stamp(graphics.CharacterRight)
+	// right arrow key moves the destroyer to the right
+	if ebiten.IsKeyPressed(ebiten.KeyRight) {
+
+		WolfpackApp.destroyer.Character(graphics.CharacterRight)
 		WolfpackApp.destroyer.IncX(WolfpackApp.destroyer.GetSpeed())
+	}
 
-		// space drops depth charges
-		//} else if repeatingKeyPressed(ebiten.KeySpace) {
-	} else if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-
+	// space drops depth charges
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		WolfpackApp.destroyer.Fire(true)
 	}
 }
-
-// repeatingKeyPressed return true when key is pressed considering the repeat state.
-/*func repeatingKeyPressed(key ebiten.Key) bool {
-	const (
-		delay    = 30
-		interval = 3
-	)
-	d := inpututil.KeyPressDuration(key)
-	if d == 1 {
-		return true
-	}
-	if d >= delay && (d-delay)%interval == 0 {
-		return true
-	}
-	return false
-}*/
 
 // function closeWindow closes the game when the Q key or Alt-F4 are pressed
 func closeWindow() {

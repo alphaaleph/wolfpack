@@ -45,7 +45,13 @@ There are three sets of ammo used by the characters:
 
 
 ## Ammo Pool
-A pool pattern is being used to manage the character's ammo.
+A pool pattern is being used to manage the character's ammo. Currently, each character can only fire as much ammo as
+allowed at one time.  Once the ammo leaves the screen, or explodes by hitting another character, the ammo is returned 
+to the pool. These are the current amounts for ach character:
+
+* destroyer has 5 deep charges allocated
+* uboat has 3 torpedos allocated
+* u103 has 8 torpedos allocated
 
 
 
@@ -57,7 +63,7 @@ also use pointers, or it will fail to compile.  Ex."
 ```
     // spriteCharacterObject defines the image manipulation constrains for characters
     type spriteCharacterObject interface {
-	    *destroyer | *u103 | *uboat | *stamp
+	    *destroyer | *u103 | *uboat | *character
 	    SpriteObject
 	    GetRect(characterType) image.Rectangle
     }

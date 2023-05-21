@@ -5,81 +5,63 @@ import (
 	"sync"
 )
 
-// poolObject is the interface of ammunition used in the game
-type poolObject interface {
-	getNum() int
-}
-
 // pool manages the different ammo pools
 type pool struct {
-	idle     []poolObject
-	active   []poolObject
+	idle     []*ammo
+	active   []*ammo
 	capacity int
 	mulock   *sync.Mutex
 }
 
-// destroyer handles the ammunition for the destroyer
-type destroyerPool struct {
-	pool
-}
-
-// wolfpackPool handles the ammunition for the uboats
-type wolfpackPool struct {
-	pool
-}
-
-// u103Pool handles the ammunition for the u103 boss
-type u103Pool struct {
-	pool
-}
-
-// loadAmmo initializes the ammo pool
-func LoadAmmo(poolObjects []poolObject) (*pool, error) {
-	if len(poolObjects) == 0 {
+// weaponReady initializes the ammo pool
+func weaponReady(munitions []*ammo) (*pool, error) {
+	if len(munitions) == 0 {
 		return nil, fmt.Errorf("Cannot craete a pool of 0 length")
 	}
-	active := make([]poolObject, 0)
+	active := make([]*ammo, 0)
 	pool := &pool{
-		idle:     poolObjects,
+		idle:     munitions,
 		active:   active,
-		capacity: len(poolObjects),
+		capacity: len(munitions),
 		mulock:   new(sync.Mutex),
 	}
 	return pool, nil
 }
 
 // fire gets an ammo from the pool to shoot it to an adversary
-func (p *pool) fire() (poolObject, error) {
+func (p *pool) fire() (*ammo, error) {
 	p.mulock.Lock()
 	defer p.mulock.Unlock()
 	if len(p.idle) == 0 {
 		return nil, fmt.Errorf("No pool object free. Please request after sometime")
 	}
 	obj := p.idle[0]
+	obj.fired = true
 	p.idle = p.idle[1:]
 	p.active = append(p.active, obj)
-	fmt.Printf("fire the ammo number: %s\n", obj.getNum())
+	fmt.Printf("fire the ammo sequence number: %s\n", obj.getSeqNum())
 	return obj, nil
 }
 
 // reload returns ammo into the pool to be reused
-func (p *pool) reload(target poolObject) error {
+func (p *pool) reload(target *ammo) error {
 	p.mulock.Lock()
 	defer p.mulock.Unlock()
+	target.fired = false
 	err := p.discharge(target)
 	if err != nil {
 		return err
 	}
 	p.idle = append(p.idle, target)
-	fmt.Printf("reload ammo number: %s\n", target.getNum())
+	fmt.Printf("reload ammo sequence number: %s\n", target.getSeqNum())
 	return nil
 }
 
 // discharge gets rid of ammo from the pool
-func (p *pool) discharge(target poolObject) error {
+func (p *pool) discharge(target *ammo) error {
 	currentActiveLength := len(p.active)
 	for i, obj := range p.active {
-		if obj.getNum() == target.getNum() {
+		if obj.getSeqNum() == target.getSeqNum() {
 			p.active[currentActiveLength-1], p.active[i] = p.active[i], p.active[currentActiveLength-1]
 			p.active = p.active[:currentActiveLength-1]
 			return nil

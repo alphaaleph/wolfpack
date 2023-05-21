@@ -1,25 +1,17 @@
 package graphics
 
-import (
-	"bytes"
-	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"image"
-)
-
-// spriteAmmoObject defines the image manipulation constrains for ammunition's
-type spriteAmmoObject interface {
-	*ammo | *stamp
-	SpriteObject
-	GetRect(ammoType) image.Rectangle
+// spriteAmmoConstrains defines the image manipulation constrains for ammunition's
+/*type spriteAmmoConstrains interface {
+	*ammo
+	SpriteAmmoObject
 }
 
 // spriteAmmoImpl is used to call functions on the ammo sprite structs
-type spriteAmmoImpl[T spriteAmmoObject] struct {
+type spriteAmmoImpl[T spriteAmmoConstrains] struct {
 }
 
 // New returns an instance of an ammo sprite
-func NewAmmoImpl[T spriteAmmoObject]() (t *spriteAmmoImpl[T]) {
+func NewAmmoImpl[T spriteAmmoConstrains]() (t *spriteAmmoImpl[T]) {
 	t = &spriteAmmoImpl[T]{}
 	return t
 }
@@ -36,7 +28,7 @@ func (s *spriteAmmoImpl[T]) loadAmmoSprite(at ammoType, value T) *ebiten.Image {
 		gameSprites = ebiten.NewImageFromImage(sprites)
 	}
 
-	// retrieve the struct stamp and load it into
-	stamp := gameSprites.SubImage(value.GetRect(at)).(*ebiten.Image)
-	return stamp
-}
+	// retrieve the struct ammo and load it into
+	ammo := gameSprites.SubImage(value.GetRect(at)).(*ebiten.Image)
+	return ammo
+}*/

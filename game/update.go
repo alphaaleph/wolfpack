@@ -9,7 +9,6 @@ func (g *Game) Update() error {
 	case ModeTitle:
 		g.modeLevel = ModeGame //TODO: make sure to add title screen before switching to game mode
 	case ModeGame:
-		//g.keys = inpututil.AppendPressedKeys(g.keys[:0])
 		gameKeys()
 	case ModeOver:
 	}

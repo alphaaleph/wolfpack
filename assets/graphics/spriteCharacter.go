@@ -8,19 +8,18 @@ import (
 	_ "image/png"
 )
 
-// spriteCharacterObject defines the image manipulation constrains for characters
-type spriteCharacterObject interface {
-	*destroyer | *u103 | *uboat | *stamp
-	SpriteObject
-	GetRect(characterType) image.Rectangle
+// spriteCharacterConstrains defines the image manipulation constrains for characters
+type spriteCharacterConstrains interface {
+	*destroyer | *u103 | *uboat | *character
+	SpriteCharacterObject
 }
 
 // spriteCharacterImpl is used to call functions on the character's sprite structs
-type spriteCharacterImpl[T spriteCharacterObject] struct {
+type spriteCharacterImpl[T spriteCharacterConstrains] struct {
 }
 
 // New returns an instance of a sprite
-func NewCharacterImpl[T spriteCharacterObject]() (t *spriteCharacterImpl[T]) {
+func NewCharacterImpl[T spriteCharacterConstrains]() (t *spriteCharacterImpl[T]) {
 	t = &spriteCharacterImpl[T]{}
 	return t
 }
@@ -37,7 +36,7 @@ func (s *spriteCharacterImpl[T]) loadCharacterSprite(ct characterType, value T) 
 		gameSprites = ebiten.NewImageFromImage(sprites)
 	}
 
-	// retrieve the struct stamp and load it into
-	stamp := gameSprites.SubImage(value.GetRect(ct)).(*ebiten.Image)
-	return stamp
+	// retrieve the struct character sprite and load it into
+	character := gameSprites.SubImage(value.GetRect(ct)).(*ebiten.Image)
+	return character
 }
