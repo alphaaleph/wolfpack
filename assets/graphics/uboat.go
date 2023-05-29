@@ -1,44 +1,71 @@
 package graphics
 
 import (
-	"github.com/alphaaleph/wolfpack/util"
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
-	"math/rand"
 )
 
 var (
-	uboatAmmoPack  = 3 // 3 torpedos
+	wolfpack       = 3 // 3 uboats will show at once TODO: move to configuration
+	uboatsLives    = 3 // each uboat has 3 lives
+	uboatAmmoPack  = 2 // 3 torpedos
 	uboatAmmoSpeed = 2.0
 )
 
 type uboat struct {
 	character
-	sunk bool
+	wolvesInfo
+	lives int
+}
+
+// NewWolfpack returns a slice of new uboats
+func NewWolfpack() []SpriteCharacterObject {
+	//create a new map
+	var uboats []SpriteCharacterObject
+
+	for i := 0; i < wolfpack; i++ {
+		uboats = append(uboats, NewUboat(depthTypes[i]))
+	}
+	return uboats
 }
 
 // NewUboat creates an instance of a new Uboat
-func NewUboat() SpriteCharacterObject {
+func NewUboat(dt depthType) SpriteCharacterObject {
 	// create a new destroyer
-	u := &u103{
+	u := &uboat{
 		character: character{
-			ctype: CharacterLeft,
-			speed: subSpeed[depthC], //TODO: pick the correct speed based on the depth the sub is at
-			X:     0,                //TODO: calculate the correct random location
-			Y:     0,                //TODO: calculate the correct random location
+			exploded: false,
 		},
-		sunk: false,
+		lives: uboatsLives,
 	}
+
+	// get sub info
+	u.cImageType = u.getRandomDirection()
+	u.dtype = dt
+	u.X, u.Y = u.getEntryLocation(u.cImageType, u.dtype)
+	u.speed = subSpeed[u.dtype]
+
+	// load the uboat sprites ahead of time
+	u.leftImage = newSpriteImpl[*uboat]().load(0, u)
+	u.rightImage = newSpriteImpl[*uboat]().load(1, u)
+	u.explodeImage = newSpriteImpl[*uboat]().load(2, u)
 
 	// load the ammo into the u103
 	u.munition = u.getMunitionPool(uboatTorpedo, uboatAmmoSpeed, uboatAmmoPack)
 
+	fmt.Printf("uboat:  ---------------------\n ctype: %v\n dtype: %v\n fire: %v\n exploded: %v\n"+
+		"X: %f\n Y: %f\n speed: %v\n image: %v\n leftImage: %v\n rightImage: %v\n explodedImage: %v\n"+
+		"munition: %v\n", u.cImageType, u.dtype, u.fire, u.exploded, u.X, u.Y, u.speed, u.image, u.leftImage,
+		u.rightImage, u.explodeImage, u.munition)
+
 	return u
 }
 
-// GetRect returns the uboat's image location in the sprite sheet
-func (u *uboat) GetRect(ct characterType) image.Rectangle {
-	switch ct {
+// TODO: move to configuration
+// getSpriteRect returns the uboat's image location in the sprite sheet
+func (u *uboat) getSpriteRect(position int) image.Rectangle {
+	switch characterTypes[position] {
 	case CharacterLeft:
 		return uboatLeftSprite
 	case CharacterRight:
@@ -52,26 +79,24 @@ func (u *uboat) GetRect(ct characterType) image.Rectangle {
 
 // Render draws a uboat
 func (u *uboat) Render(screen *ebiten.Image) {
-	if !u.sunk {
-		options := &ebiten.DrawImageOptions{}
-		options.GeoM.Scale(1.5, 1.5)
-		w, h := u.image.Bounds().Dx(), u.image.Bounds().Dy()
-		options.GeoM.Translate(-float64(w)/2.0, -float64(h)/2.0)
 
-		// get the location of uboat
-		var x, y float64
-		//timer = time.AfterFunc(time.Second, func() {
-		x, y = u.getRandomLocation()
-		//})
-		options.GeoM.Translate(x, y)
-		options.Filter = ebiten.FilterLinear
-		screen.DrawImage(u.image, options)
+	options := &ebiten.DrawImageOptions{}
+
+	if !u.exploded {
+		// move the uboat
+		u.X = u.X + (u.speed * float64(u.getMovementMultiplier(u.cImageType)))
+		fmt.Printf("rendering uboat with X: %v and Y: %v\n", u.X, u.Y)
+
+		// check the location in case it has to be reset
+		u.checkLocation(&u.cImageType, &u.X)
+	} else {
+		u.cImageType = CharacterExplosion
 	}
-}
 
-// getRandomLocation picks random coordinates to display a uboat
-func (b *uboat) getRandomLocation() (x float64, y float64) {
-	x = float64(rand.Intn(util.ScreenWidth))
-	y = float64(rand.Intn(util.ScreenHeight))
-	return
+	// render the uboat
+	u.image = u.getSprite(u.cImageType)
+	options.GeoM.Scale(0.75, 0.75)
+	options.GeoM.Translate(u.X, u.Y)
+	options.Filter = ebiten.FilterLinear
+	screen.DrawImage(u.image, options)
 }

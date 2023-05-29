@@ -13,7 +13,7 @@ var (
 
 type u103 struct {
 	character
-	sunk bool
+	wolvesInfo
 }
 
 // NewU103 creates an instance of a new U103 boss
@@ -21,13 +21,20 @@ func NewU103() SpriteCharacterObject {
 	// create a new destroyer
 	u := &u103{
 		character: character{
-			ctype: CharacterLeft,
-			speed: subSpeed[depthC], //TODO: pick the speed based on the depth that the u103 appears at
-			X:     0,                //TODO: calculate the correct random location
-			Y:     0,                //TODO: calculate the correct random location
+			exploded: false,
 		},
-		sunk: false,
 	}
+
+	// get sub info
+	u.cImageType = u.getRandomDirection()
+	u.dtype = u.getRandomDepth()
+	u.X, u.Y = u.getEntryLocation(u.cImageType, u.dtype)
+	u.speed = subSpeed[u.dtype]
+
+	// load the u103 sprites ahead of time
+	u.leftImage = newSpriteImpl[*u103]().load(0, u)
+	u.rightImage = newSpriteImpl[*u103]().load(1, u)
+	u.explodeImage = newSpriteImpl[*u103]().load(2, u)
 
 	// load the ammo into the u103
 	u.munition = u.getMunitionPool(u103Torpedo, u103AmmoSpeed, u103AmmoPack)
@@ -35,9 +42,10 @@ func NewU103() SpriteCharacterObject {
 	return u
 }
 
-// GetRect returns the u103's image location in the sprite sheet
-func (u *u103) GetRect(ct characterType) image.Rectangle {
-	switch ct {
+// TODO:  move to configuration
+// getSpriteRect returns the u103's image location in the sprite sheet
+func (u *u103) getSpriteRect(positoin int) image.Rectangle {
+	switch characterTypes[positoin] {
 	case CharacterLeft:
 		return u103LeftSprite
 	case CharacterRight:
@@ -51,6 +59,9 @@ func (u *u103) GetRect(ct characterType) image.Rectangle {
 
 // Render draws the u103
 func (u *u103) Render(screen *ebiten.Image) {
+
+	// render the destroyer
+	u.image = u.getSprite(u.cImageType)
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Scale(1.5, 1.5)
 	w, h := u.image.Bounds().Dx(), u.image.Bounds().Dy()

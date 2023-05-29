@@ -23,7 +23,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// render the background
 	util.DrawScoresBackground(screen)
 	util.DrawDestroyerBackground(screen)
-	util.DrawWolfpackBackground(screen)
+	util.DrawWolfpackBackgroundA(screen)
+	util.DrawWolfpackBackgroundB(screen)
+	util.DrawWolfpackBackgroundC(screen)
 
 	// render the score
 	const dpi = 72
@@ -49,6 +51,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if graphics.BringTheWolf {
 		WolfpackApp.u103.Render(screen)
 	} else {
-		//TODO: show uboats
+		for _, uboat := range WolfpackApp.wolfpack {
+			//if !uboat.HasExploded() {
+			uboat.Render(screen)
+			//}
+		}
 	}
 }

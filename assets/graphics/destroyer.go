@@ -16,7 +16,6 @@ var (
 // destroyer represents the destroyer's sprite
 type destroyer struct {
 	character
-	sunk bool
 }
 
 // NewDestroyer creates an instance of a new Destroyer
@@ -24,13 +23,19 @@ func NewDestroyer() SpriteCharacterObject {
 	// create a new destroyer
 	d := &destroyer{
 		character: character{
-			ctype: CharacterLeft,
-			speed: destroyerSpeed,
-			X:     util.ScreenWidth / 2.0,
-			Y:     float64(util.DestroyerSectionRect.Bounds().Dy() - util.ScoreSectionRect.Bounds().Dy()),
+			cImageType: CharacterLeft,
+			exploded:   false,
+			speed:      destroyerSpeed,
+			X:          util.ScreenWidth / 2.0,
+			Y:          float64(util.DestroyerSectionTopY + characterPixelHalfSide - 10),
+			//Y:        float64(util.DestroyerSectionRect.Bounds().Dy() - util.ScoreSectionRect.Bounds().Dy()),
 		},
-		sunk: false,
 	}
+
+	// load the destroyer sprites ahead of time
+	d.leftImage = newSpriteImpl[*destroyer]().load(0, d)
+	d.rightImage = newSpriteImpl[*destroyer]().load(1, d)
+	d.explodeImage = newSpriteImpl[*destroyer]().load(2, d)
 
 	// load the ammo into the destroyer
 	d.munition = d.getMunitionPool(deepCharge, destroyerAmmoSpeed, destroyerAmmoPack)
@@ -58,9 +63,10 @@ func (d *destroyer) IncX(x float64) {
 	d.X += x
 }
 
-// GetRect returns the destroyer's image location in the sprite sheet
-func (d *destroyer) GetRect(ct characterType) image.Rectangle {
-	switch ct {
+// TODO: move to configuration
+// getSpriteRect returns the destroyer's image location in the sprite sheet
+func (d *destroyer) getSpriteRect(position int) image.Rectangle {
+	switch characterTypes[position] {
 	case CharacterLeft:
 		return destroyerLeftSprite
 	case CharacterRight:
@@ -76,7 +82,7 @@ func (d *destroyer) GetRect(ct characterType) image.Rectangle {
 func (d *destroyer) Render(screen *ebiten.Image) {
 
 	// render the destroyer
-	d.image = NewCharacterImpl[*destroyer]().loadCharacterSprite(d.ctype, d)
+	d.image = d.getSprite(d.cImageType)
 	options := &ebiten.DrawImageOptions{}
 	x := d.X - float64(d.image.Bounds().Size().X/2)
 	options.GeoM.Translate(x, d.Y)
@@ -87,8 +93,11 @@ func (d *destroyer) Render(screen *ebiten.Image) {
 	if d.fire {
 		defer d.Fire(false)
 		if deepCharge, _ := d.munition.fire(); deepCharge != nil {
+			if d.cImageType == CharacterLeft {
+				x = x + float64(characterPixelSide) - 20.0
+			}
 			deepCharge.X = x
-			deepCharge.Y = d.Y
+			deepCharge.Y = d.Y + float64(characterPixelHalfSide)
 			deepCharge.Render(screen)
 		}
 	}

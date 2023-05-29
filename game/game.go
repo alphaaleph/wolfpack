@@ -12,7 +12,7 @@ type Game struct {
 	//keys      []ebiten.Key
 	destroyer graphics.SpriteCharacterObject   // boat used by the player to destroy uboats
 	u103      graphics.SpriteCharacterObject   // the boss uboat, appears when all uboats are destroyed
-	wolfpack  []graphics.SpriteCharacterObject // a slice of uboat
+	wolfpack  []graphics.SpriteCharacterObject // a group of uboats
 }
 
 // NewGame creates a single instance of the game

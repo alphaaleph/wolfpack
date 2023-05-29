@@ -1,15 +1,11 @@
 package graphics
 
 import (
-	"bytes"
-	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"image"
 	_ "image/png"
 )
 
 // spriteCharacterConstrains defines the image manipulation constrains for characters
-type spriteCharacterConstrains interface {
+/*type spriteCharacterConstrains interface {
 	*destroyer | *u103 | *uboat | *character
 	SpriteCharacterObject
 }
@@ -37,6 +33,7 @@ func (s *spriteCharacterImpl[T]) loadCharacterSprite(ct characterType, value T) 
 	}
 
 	// retrieve the struct character sprite and load it into
-	character := gameSprites.SubImage(value.GetRect(ct)).(*ebiten.Image)
-	return character
-}
+	//character := gameSprites.SubImage(value.GetRect(ct)).(*ebiten.Image)
+	//return character
+	return nil
+}*/

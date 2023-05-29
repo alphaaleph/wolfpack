@@ -1,33 +1,36 @@
 package graphics
 
 import (
-	"bytes"
 	"fmt"
-	"github.com/alphaaleph/wolfpack/util"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 )
 
+var (
+	ammoPixelHalfSide = 32
+	ammoPixelSide     = 64
+)
+
 type ammo struct {
-	atype  ammoType
-	seqNum int
-	fired  bool
-	X, Y   float64
-	speed  float64
-	image  *ebiten.Image
+	atype    ammoType
+	seqNum   int
+	exploded bool
+	fired    bool
+	X, Y     float64
+	speed    float64
+	image    *ebiten.Image
 }
 
-// NewAmmo creates an instance of a new ammo
-func NewAmmo(at ammoType, id int) SpriteAmmoObject {
-	// create a new ammo
-	ammoSprite := &ammo{atype: at, seqNum: id}
-	ammoSprite.image = ammoSprite.loadAmmoSprite(0)
-
+// newAmmo returns and instance of a new ammo
+func newAmmo(seqNum int, at ammoType, speed float64) *ammo {
+	a := &ammo{seqNum: seqNum, atype: at, speed: speed}
+	a.image = newSpriteImpl[*ammo]().load(at.Int(), a)
+	return a
 	// ammo
-	ammoSprite.X = util.ScreenWidth / 2.0
-	ammoSprite.Y = float64(util.DestroyerSectionRect.Bounds().Dy() - ammoSprite.image.Bounds().Size().Y)
-	ammoSprite.speed = 15 // TODO: create different speed for how hard the gae is
-	return ammoSprite
+	//ammoSprite.X = util.ScreenWidth / 2.0
+	//ammoSprite.Y = float64(util.DestroyerSectionTopY + ammoSprite.image.Bounds().Size().Y)
+	//ammoSprite.speed = 15 // TODO: create different speed for how hard the gae is
+	//return ammoSprite
 }
 
 // DecX decreases the X coordinate by the provide amount
@@ -38,6 +41,15 @@ func (a *ammo) DecX(x float64) {
 // IncX increases the X coordinate by the provide amount
 func (a *ammo) IncX(x float64) {
 	a.X += x
+}
+
+// getRect returns an ammo rectangle coordinates
+func (a *ammo) getRect() image.Rectangle {
+	rect := image.Rectangle{
+		Min: image.Point{int(a.X), int(a.Y)},
+		Max: image.Point{int(a.X) + ammoPixelSide, int(a.Y) + ammoPixelSide},
+	}
+	return rect
 }
 
 // GetSpeed returns the ammo's speed
@@ -56,9 +68,10 @@ func (a *ammo) getSeqNum() int {
 	return a.seqNum
 }
 
-// GetRect returns the ammo's image location in the sprite sheet
-func (a *ammo) GetRect(at ammoType) image.Rectangle {
-	switch at {
+// TODO: move to configuration
+// getSpriteRect returns the ammo's image location in the sprite sheet
+func (a *ammo) getSpriteRect(position int) image.Rectangle {
+	switch ammoTypes[position] {
 	case deepCharge:
 		fmt.Println("getting deep charge rectangle")
 		return deepChargeSprite
@@ -89,19 +102,17 @@ func (a *ammo) Render(screen *ebiten.Image) {
 	screen.DrawImage(a.image, options)
 }
 
-// loadAmmoSprite loads a sprite for a particular weapon piece
-func (a *ammo) loadAmmoSprite(at ammoType) *ebiten.Image {
-	// decode the sprite string
-	if gameSprites == nil {
-		sprites, _, err := image.Decode(bytes.NewReader(byteSprites))
-		if err != nil {
-			fmt.Println("failed to read sprite string:", err)
-			panic(err)
-		}
-		gameSprites = ebiten.NewImageFromImage(sprites)
-	}
+// setExploded sets the ammo explosion flag so it is deleted from the pool
+func (a *ammo) setExploded(e bool) {
+	a.exploded = e
+}
 
-	// retrieve the struct character and load it into
-	character := gameSprites.SubImage(a.GetRect(at)).(*ebiten.Image)
-	return character
+// HasExploded determines if the ammo has exploded
+func (a *ammo) HasExploded() bool {
+	return a.exploded
+}
+
+// getType returns the ammo type
+func (a *ammo) getType() ammoType {
+	return a.atype
 }
