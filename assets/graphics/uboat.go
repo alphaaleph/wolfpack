@@ -91,6 +91,7 @@ func (u *uboat) Render(screen *ebiten.Image) {
 		u.checkLocation(&u.cImageType, &u.X)
 	} else {
 		u.cImageType = CharacterExplosion
+		u.lives--
 	}
 
 	// render the uboat
@@ -99,4 +100,15 @@ func (u *uboat) Render(screen *ebiten.Image) {
 	options.GeoM.Translate(u.X, u.Y)
 	options.Filter = ebiten.FilterLinear
 	screen.DrawImage(u.image, options)
+}
+
+// StillHasLives returns true if the uboat has additional lives
+func (u *uboat) StillHasLives() bool {
+	return u.lives > 0
+}
+
+// Reset sets the uboat back to a playing state
+func (u *uboat) Reset() {
+	u.exploded = false
+	u.image = u.leftImage
 }

@@ -1,6 +1,7 @@
 package graphics
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 )
@@ -60,16 +61,25 @@ func (u *u103) getSpriteRect(positoin int) image.Rectangle {
 // Render draws the u103
 func (u *u103) Render(screen *ebiten.Image) {
 
-	// render the destroyer
-	u.image = u.getSprite(u.cImageType)
+	// render the u103
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Scale(1.5, 1.5)
-	w, h := u.image.Bounds().Dx(), u.image.Bounds().Dy()
-	options.GeoM.Translate(-float64(w)/2.0, -float64(h)/2.0)
 
-	// readjust to use the middle of the player
-	x := u.X - float64(u.image.Bounds().Size().X/2)
-	options.GeoM.Translate(x, u.Y)
+	if !u.exploded {
+		// move the uboat
+		u.X = u.X + (u.speed * float64(u.getMovementMultiplier(u.cImageType)))
+		fmt.Printf("rendering uboat with X: %v and Y: %v\n", u.X, u.Y)
+
+		// check the location in case it has to be reset
+		u.checkLocation(&u.cImageType, &u.X)
+		_, u.Y = u.getEntryLocation(u.cImageType, u.dtype)
+	} else {
+		u.cImageType = CharacterExplosion
+	}
+
+	// render the u103
+	u.image = u.getSprite(u.cImageType)
+	options.GeoM.Scale(0.75, 0.75)
+	options.GeoM.Translate(u.X, u.Y)
 	options.Filter = ebiten.FilterLinear
 	screen.DrawImage(u.image, options)
 }

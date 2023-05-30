@@ -31,6 +31,8 @@ type SpriteCharacterObject interface {
 	Fire(bool)
 	Character(characterImageType)
 	GetFiredMunitions() []SpriteAmmoObject
+	Reset()
+	StillHasLives() bool
 }
 
 type SpriteAmmoObject interface {

@@ -53,7 +53,7 @@ func (p *pool) reload(target *ammo) error {
 		return err
 	}
 	p.idle = append(p.idle, target)
-	fmt.Printf("reload ammo sequence number: %s\n", target.getSeqNum())
+	fmt.Printf("reload ammo sequence number: \n", target.getSeqNum())
 	return nil
 }
 

@@ -64,7 +64,7 @@ func (a *ammo) Sprite(at ammoType) {
 
 // getSeqNum returns the ammo sequence number
 func (a *ammo) getSeqNum() int {
-	fmt.Println("get sequence number: %d", a.seqNum)
+	fmt.Println("get sequence number: ", a.seqNum)
 	return a.seqNum
 }
 
@@ -90,15 +90,20 @@ func (a *ammo) getSpriteRect(position int) image.Rectangle {
 func (a *ammo) Render(screen *ebiten.Image) {
 	// render the ammo
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Scale(0.35, 0.35)
 
-	if a.fired {
-		a.Y = a.Y + destroyerAmmoSpeed
+	if !a.HasExploded() {
+
+		if a.fired {
+			a.Y = a.Y + destroyerAmmoSpeed
+		}
+
+		// render
+		options.GeoM.Scale(0.30, 0.30)
+		options.GeoM.Translate(a.X, a.Y)
+		options.Filter = ebiten.FilterLinear
+	} else {
+		a.image.Clear()
 	}
-
-	// render
-	options.GeoM.Translate(a.X, a.Y)
-	options.Filter = ebiten.FilterLinear
 	screen.DrawImage(a.image, options)
 }
 

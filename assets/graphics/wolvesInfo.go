@@ -77,4 +77,9 @@ func (wi *wolvesInfo) checkLocation(ct *characterImageType, x *float64) {
 func (wi *wolvesInfo) reset(ct *characterImageType, x *float64) {
 	*ct = wi.getRandomDirection()
 	*x, _ = wi.getEntryLocation(*ct, wi.dtype)
+
+	// if it is the u103 uboat also pick a random depth
+	if BringTheWolf {
+		wi.dtype = wi.getRandomDepth()
+	}
 }

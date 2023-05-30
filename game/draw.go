@@ -51,10 +51,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if graphics.BringTheWolf {
 		WolfpackApp.u103.Render(screen)
 	} else {
-		for _, uboat := range WolfpackApp.wolfpack {
-			//if !uboat.HasExploded() {
-			uboat.Render(screen)
-			//}
+		// render uboats as long as we have a wolfpack
+		if len(WolfpackApp.wolfpack) > 0 {
+			for i, uboat := range WolfpackApp.wolfpack {
+				uboat.Render(screen)
+
+				// if the uboat was exploded and
+				if uboat.HasExploded() {
+					if uboat.StillHasLives() {
+						uboat.Reset()
+					} else {
+						WolfpackApp.wolfpack = append(WolfpackApp.wolfpack[:i], WolfpackApp.wolfpack[i+1:]...)
+					}
+				}
+			}
+		} else {
+			// when the wolfpack is destroyed bring the boss
+			graphics.BringTheWolf = true
 		}
 	}
 }

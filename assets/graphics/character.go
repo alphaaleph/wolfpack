@@ -105,3 +105,12 @@ func (c *character) GetFiredMunitions() (munitions []SpriteAmmoObject) {
 	}
 	return
 }
+
+// Reset sets the uboat back to a playing state
+func (c *character) Reset() {
+}
+
+// StillHasLives is true of the chracter still has lives
+func (c *character) StillHasLives() bool {
+	return false
+}
