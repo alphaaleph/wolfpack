@@ -2,6 +2,10 @@ package game
 
 import "github.com/alphaaleph/wolfpack/assets/graphics"
 
+var (
+	Score int
+)
+
 // initialize images
 func init() {
 

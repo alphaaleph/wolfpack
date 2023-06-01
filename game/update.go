@@ -46,6 +46,7 @@ func (g *Game) Update() error {
 			graphics.CheckCollision(characters, munitions)
 		}
 	case ModeOver:
+		// do cleaning
 	}
 	return nil
 }

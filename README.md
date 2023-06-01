@@ -49,8 +49,8 @@ A pool pattern is being used to manage the character's ammo. Currently, each cha
 allowed at one time.  Once the ammo leaves the screen, or explodes by hitting another character, the ammo is returned 
 to the pool. These are the current amounts for ach character:
 
-* destroyer has 5 deep charges allocated
-* uboat has 3 torpedos allocated
+* destroyer has 3 deep charges allocated
+* uboat has 2 torpedos allocated
 * u103 has 8 torpedos allocated
 
 

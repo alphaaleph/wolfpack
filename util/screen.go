@@ -25,11 +25,12 @@ var (
 	wolfpackSectionRectC = ebiten.NewImage(ScreenWidth, wolfpackSectionHeight)
 
 	// sections top vertical pixel
-	ScoreSectionTopY     = 0
-	DestroyerSectionTopY = scoreSectionHeight
-	WolfpackSectionTopYA = scoreSectionHeight + destroyerSectionHeight
-	WolfpackSectionTopYB = scoreSectionHeight + destroyerSectionHeight + wolfpackSectionHeight
-	WolfpackSectionTopYC = scoreSectionHeight + destroyerSectionHeight + wolfpackSectionHeight*2
+	ScoreSectionTopY        = 0
+	DestroyerSectionTopY    = scoreSectionHeight
+	DestroyerSectionBottomY = DestroyerSectionTopY + destroyerSectionHeight
+	WolfpackSectionTopYA    = scoreSectionHeight + destroyerSectionHeight
+	WolfpackSectionTopYB    = scoreSectionHeight + destroyerSectionHeight + wolfpackSectionHeight
+	WolfpackSectionTopYC    = scoreSectionHeight + destroyerSectionHeight + wolfpackSectionHeight*2
 )
 
 func DrawScoresBackground(screen *ebiten.Image) {

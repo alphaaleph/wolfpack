@@ -28,6 +28,19 @@ func weaponReady(munitions []*ammo) (*pool, error) {
 	return pool, nil
 }
 
+// discharge gets rid of ammo from the pool
+func (p *pool) discharge(target *ammo) error {
+	currentActiveLength := len(p.active)
+	for i, obj := range p.active {
+		if obj.getSeqNum() == target.getSeqNum() {
+			p.active[currentActiveLength-1], p.active[i] = p.active[i], p.active[currentActiveLength-1]
+			p.active = p.active[:currentActiveLength-1]
+			return nil
+		}
+	}
+	return fmt.Errorf("ammo doesn't belong to the pool")
+}
+
 // fire gets an ammo from the pool to shoot it to an adversary
 func (p *pool) fire() (*ammo, error) {
 	p.mulock.Lock()
@@ -55,17 +68,4 @@ func (p *pool) reload(target *ammo) error {
 	p.idle = append(p.idle, target)
 	fmt.Printf("reload ammo sequence number: \n", target.getSeqNum())
 	return nil
-}
-
-// discharge gets rid of ammo from the pool
-func (p *pool) discharge(target *ammo) error {
-	currentActiveLength := len(p.active)
-	for i, obj := range p.active {
-		if obj.getSeqNum() == target.getSeqNum() {
-			p.active[currentActiveLength-1], p.active[i] = p.active[i], p.active[currentActiveLength-1]
-			p.active = p.active[:currentActiveLength-1]
-			return nil
-		}
-	}
-	return fmt.Errorf("ammo doesn't belong to the pool")
 }

@@ -41,33 +41,77 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	msg := fmt.Sprintf("SCORE: %0.2f", ebiten.ActualTPS())
+	msg := fmt.Sprintf("SCORE: %d", Score)
 	text.Draw(screen, msg, mplusNormalFont, 20, 40, color.Black)
 
-	// render the destroyer
-	WolfpackApp.destroyer.Render(screen)
+	// render the game while it is not over
+	if g.modeLevel != ModeOver {
+		// render the destroyer
+		g.destroyer.Render(screen)
 
-	// render the uboats, and when all are dead bring in the boss U103
-	if graphics.BringTheWolf {
-		WolfpackApp.u103.Render(screen)
-	} else {
-		// render uboats as long as we have a wolfpack
-		if len(WolfpackApp.wolfpack) > 0 {
-			for i, uboat := range WolfpackApp.wolfpack {
-				uboat.Render(screen)
+		if g.destroyer.HasExploded() {
+			Score = Score + g.destroyer.GetPoints()
+			g.modeLevel = ModeOver
+		}
 
-				// if the uboat was exploded and
-				if uboat.HasExploded() {
-					if uboat.StillHasLives() {
-						uboat.Reset()
-					} else {
-						WolfpackApp.wolfpack = append(WolfpackApp.wolfpack[:i], WolfpackApp.wolfpack[i+1:]...)
-					}
-				}
+		// render the uboats, and when all are dead bring in the boss U103
+		if graphics.BringTheWolf {
+			if !g.u103.HasExploded() {
+				g.u103.Render(screen)
+			} else {
+				// you kill the boss the games is over
+				Score = Score + g.u103.GetPoints()
+				g.modeLevel = ModeOver
 			}
 		} else {
-			// when the wolfpack is destroyed bring the boss
-			graphics.BringTheWolf = true
+			// render uboats as long as we have a wolfpack
+			if len(g.wolfpack) > 0 {
+				for i, uboat := range g.wolfpack {
+					uboat.Render(screen)
+
+					// if the uboat was exploded and
+					if uboat.HasExploded() {
+
+						// score
+						Score = Score + uboat.GetPoints()
+
+						// clear all exploded bobms
+						g.destroyer.Reload()
+
+						// deal with the uboats
+						if uboat.StillHasLives() {
+							uboat.Reset()
+						} else {
+							// remove dead uboats grouping by depth
+							g.wolfpack = append(g.wolfpack[:i], g.wolfpack[i+1:]...)
+						}
+					}
+				}
+			} else {
+				// when the wolfpack is destroyed bring the boss
+				graphics.BringTheWolf = true
+			}
 		}
+	} else {
+		//show only the destroyer
+		g.destroyer.Render(screen)
+		g.u103.Render(screen)
+
+		// show game over
+		const dpi = 140
+		tt, err := opentype.Parse(fonts.PressStart2P_ttf)
+		if err != nil {
+			log.Fatal(err)
+		}
+		gameOverFont, err := opentype.NewFace(tt, &opentype.FaceOptions{
+			Size:    36,
+			DPI:     dpi,
+			Hinting: font.HintingVertical,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		msgOver := fmt.Sprintf("G A M E\n\n\nO V E R")
+		text.Draw(screen, msgOver, gameOverFont, 50, util.ScreenHeight/3, color.RGBA{255, 127, 127, 1})
 	}
 }

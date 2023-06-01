@@ -15,24 +15,26 @@ var (
 
 // spriteObject defines the image functionality for both
 type spriteObject interface {
+	DecX(float64)
+	GetSpeed() float64
+	HasExploded() bool
+	IncX(float64)
+	Render(screen *ebiten.Image)
 	getRect() image.Rectangle
 	getSpriteRect(int) image.Rectangle
 	setExploded(bool)
-	GetSpeed() float64
-	HasExploded() bool
-	DecX(float64)
-	IncX(float64)
-	Render(screen *ebiten.Image)
 }
 
 type SpriteCharacterObject interface {
 	spriteObject
-	isFiring() bool
-	Fire(bool)
 	Character(characterImageType)
+	Fire(bool)
 	GetFiredMunitions() []SpriteAmmoObject
+	GetPoints() int
+	Reload()
 	Reset()
 	StillHasLives() bool
+	isFiring() bool
 }
 
 type SpriteAmmoObject interface {

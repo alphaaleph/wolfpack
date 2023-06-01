@@ -2,13 +2,14 @@ package graphics
 
 import (
 	"fmt"
+	"github.com/alphaaleph/wolfpack/util"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 )
 
 var (
 	BringTheWolf  = false
-	u103AmmoPack  = 8 // 8 torpedos
+	u103AmmoPack  = 5 // 5 torpedos
 	u103AmmoSpeed = 5.0
 )
 
@@ -43,19 +44,9 @@ func NewU103() SpriteCharacterObject {
 	return u
 }
 
-// TODO:  move to configuration
-// getSpriteRect returns the u103's image location in the sprite sheet
-func (u *u103) getSpriteRect(positoin int) image.Rectangle {
-	switch characterTypes[positoin] {
-	case CharacterLeft:
-		return u103LeftSprite
-	case CharacterRight:
-		return u103RightSprite
-	case CharacterExplosion:
-		return u103ExplosionSprite
-	default:
-		return image.Rectangle{}
-	}
+// GetPoints returns the u103 points
+func (u *u103) GetPoints() int {
+	return u103Points
 }
 
 // Render draws the u103
@@ -72,6 +63,34 @@ func (u *u103) Render(screen *ebiten.Image) {
 		// check the location in case it has to be reset
 		u.checkLocation(&u.cImageType, &u.X)
 		_, u.Y = u.getEntryLocation(u.cImageType, u.dtype)
+
+		// check when to fire
+		if len(u.munition.idle) > 0 {
+			if !u.fire {
+				u.Fire(true)
+				u.getFireLocation()
+			}
+
+			if (u.cImageType == CharacterLeft && u.X <= u.fireCoord) || (u.cImageType == CharacterRight && u.X >= u.fireCoord) {
+				if u.fire {
+					u.Fire(false)
+					if torpedo, _ := u.munition.fire(); torpedo != nil {
+						torpedo.X = u.X
+						torpedo.Y = u.Y
+					}
+				}
+			}
+		}
+
+		// check if there is an active ammo and render
+		for _, munition := range u.munition.active {
+			// when the deep charge goes pass the bottom of the screen reload it into the pool
+			if munition.Y <= float64(util.DestroyerSectionBottomY) {
+				u.munition.reload(munition)
+			} else {
+				munition.Render(screen)
+			}
+		}
 	} else {
 		u.cImageType = CharacterExplosion
 	}
@@ -82,4 +101,19 @@ func (u *u103) Render(screen *ebiten.Image) {
 	options.GeoM.Translate(u.X, u.Y)
 	options.Filter = ebiten.FilterLinear
 	screen.DrawImage(u.image, options)
+}
+
+// TODO:  move to configuration
+// getSpriteRect returns the u103's image location in the sprite sheet
+func (u *u103) getSpriteRect(positoin int) image.Rectangle {
+	switch characterTypes[positoin] {
+	case CharacterLeft:
+		return u103LeftSprite
+	case CharacterRight:
+		return u103RightSprite
+	case CharacterExplosion:
+		return u103ExplosionSprite
+	default:
+		return image.Rectangle{}
+	}
 }

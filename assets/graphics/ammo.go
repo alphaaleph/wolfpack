@@ -26,11 +26,6 @@ func newAmmo(seqNum int, at ammoType, speed float64) *ammo {
 	a := &ammo{seqNum: seqNum, atype: at, speed: speed}
 	a.image = newSpriteImpl[*ammo]().load(at.Int(), a)
 	return a
-	// ammo
-	//ammoSprite.X = util.ScreenWidth / 2.0
-	//ammoSprite.Y = float64(util.DestroyerSectionTopY + ammoSprite.image.Bounds().Size().Y)
-	//ammoSprite.speed = 15 // TODO: create different speed for how hard the gae is
-	//return ammoSprite
 }
 
 // DecX decreases the X coordinate by the provide amount
@@ -38,9 +33,48 @@ func (a *ammo) DecX(x float64) {
 	a.X -= x
 }
 
+// GetSpeed returns the ammo's speed
+func (a *ammo) GetSpeed() float64 {
+	return a.speed
+}
+
+// HasExploded determines if the ammo has exploded
+func (a *ammo) HasExploded() bool {
+	return a.exploded
+}
+
 // IncX increases the X coordinate by the provide amount
 func (a *ammo) IncX(x float64) {
 	a.X += x
+}
+
+// Render draws the ammo
+func (a *ammo) Render(screen *ebiten.Image) {
+	// render the ammo
+	options := &ebiten.DrawImageOptions{}
+
+	if !a.HasExploded() {
+		switch a.atype {
+		case deepCharge:
+			a.Y = a.Y + destroyerAmmoSpeed
+			options.GeoM.Scale(0.30, 0.30)
+		case uboatTorpedo:
+			a.Y = a.Y - uboatAmmoSpeed
+		case u103Torpedo:
+			a.Y = a.Y - u103AmmoSpeed
+			options.GeoM.Scale(0.50, 0.50)
+		}
+
+		// render
+		options.GeoM.Translate(a.X, a.Y)
+		options.Filter = ebiten.FilterLinear
+	}
+	screen.DrawImage(a.image, options)
+}
+
+// Sprite changes the character's image
+func (a *ammo) Sprite(at ammoType) {
+	a.atype = at
 }
 
 // getRect returns an ammo rectangle coordinates
@@ -50,22 +84,6 @@ func (a *ammo) getRect() image.Rectangle {
 		Max: image.Point{int(a.X) + ammoPixelSide, int(a.Y) + ammoPixelSide},
 	}
 	return rect
-}
-
-// GetSpeed returns the ammo's speed
-func (a *ammo) GetSpeed() float64 {
-	return a.speed
-}
-
-// Sprite changes the character's image
-func (a *ammo) Sprite(at ammoType) {
-	a.atype = at
-}
-
-// getSeqNum returns the ammo sequence number
-func (a *ammo) getSeqNum() int {
-	fmt.Println("get sequence number: ", a.seqNum)
-	return a.seqNum
 }
 
 // TODO: move to configuration
@@ -86,38 +104,18 @@ func (a *ammo) getSpriteRect(position int) image.Rectangle {
 	}
 }
 
-// Render draws the ammo
-func (a *ammo) Render(screen *ebiten.Image) {
-	// render the ammo
-	options := &ebiten.DrawImageOptions{}
-
-	if !a.HasExploded() {
-
-		if a.fired {
-			a.Y = a.Y + destroyerAmmoSpeed
-		}
-
-		// render
-		options.GeoM.Scale(0.30, 0.30)
-		options.GeoM.Translate(a.X, a.Y)
-		options.Filter = ebiten.FilterLinear
-	} else {
-		a.image.Clear()
-	}
-	screen.DrawImage(a.image, options)
-}
-
-// setExploded sets the ammo explosion flag so it is deleted from the pool
-func (a *ammo) setExploded(e bool) {
-	a.exploded = e
-}
-
-// HasExploded determines if the ammo has exploded
-func (a *ammo) HasExploded() bool {
-	return a.exploded
+// getSeqNum returns the ammo sequence number
+func (a *ammo) getSeqNum() int {
+	fmt.Println("get sequence number: ", a.seqNum)
+	return a.seqNum
 }
 
 // getType returns the ammo type
 func (a *ammo) getType() ammoType {
 	return a.atype
+}
+
+// setExploded sets the ammo explosion flag so it is deleted from the pool
+func (a *ammo) setExploded(e bool) {
+	a.exploded = e
 }
