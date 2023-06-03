@@ -120,6 +120,6 @@ following commands:
 
 ### Images
 
-![wolfpack - destroyer against regular subs](https://github.com/alphaaleph/wolfpack/extras/images/wolfpack.png)
+![wolfpack - destroyer against regular subs](https://github.com/alphaaleph/wolfpack/blob/main/extras/images/wolfpack.png)
 
-![wolfpack - destroyer against boss u103](https://github.com/alphaaleph/wolfpack/extras/images/u103.png)
+![wolfpack - destroyer against boss u103](https://github.com/alphaaleph/wolfpack/blob/main/extras/images/u103.png)
