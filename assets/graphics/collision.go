@@ -2,8 +2,7 @@ package graphics
 
 import "fmt"
 
-// will use a simple box collision method as this is not a production project
-
+// CheckCollision will use a simple box collision method as this is not a production project
 func CheckCollision(spriteCharacters []SpriteCharacterObject, spriteAmmos []SpriteAmmoObject) bool {
 
 	// check each character against any possible ammo collision

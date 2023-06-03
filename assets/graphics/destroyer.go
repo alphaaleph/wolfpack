@@ -53,7 +53,6 @@ func NewDestroyer() SpriteCharacterObject {
 			speed:      destroyerSpeed,
 			X:          util.ScreenWidth / 2.0,
 			Y:          float64(util.DestroyerSectionTopY + characterPixelHalfSide - 10),
-			//Y:        float64(util.DestroyerSectionRect.Bounds().Dy() - util.ScoreSectionRect.Bounds().Dy()),
 		},
 	}
 
